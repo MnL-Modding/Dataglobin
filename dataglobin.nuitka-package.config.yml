@@ -1,0 +1,4 @@
+- module-name: "dataglobin"
+  data-files:
+    dirs:
+      - "files"
