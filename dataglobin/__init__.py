@@ -1,0 +1,1 @@
+from dataglobin.main import main as main
