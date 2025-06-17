@@ -20,9 +20,11 @@ class EnemyDataTab(QtWidgets.QWidget):
 
         # ======================================================================================================================
 
-        main_layout.addWidget(QtWidgets.QLabel("Enemy"))
+        label = QtWidgets.QLabel("Ene&my")
+        main_layout.addWidget(label)
 
         self.monster_choose_box = QtWidgets.QComboBox()
+        label.setBuddy(self.monster_choose_box)
         for i, monster in enumerate(self.monster_data):
             self.monster_choose_box.addItem(self.draw_monster_sprite(i, True), self.monster_names[1][monster.name])
         self.monster_choose_box.currentIndexChanged.connect(self.update_all_monster_stats)
@@ -48,27 +50,33 @@ class EnemyDataTab(QtWidgets.QWidget):
         self.monster_image.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         monster_properties_appearance_layout.addWidget(self.monster_image, 0, 1, alignment = QtCore.Qt.AlignmentFlag.AlignCenter)
         
-        monster_properties_appearance_layout.addWidget(QtWidgets.QLabel("Name"), 1, 1)
+        label = QtWidgets.QLabel("&Name")
         box = QtWidgets.QComboBox()
         box.addItems(self.monster_names[1])
         box.currentIndexChanged.connect(self.change_monster_name)
         monster_properties_appearance_layout.addWidget(box, 2, 1)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_appearance_layout.addWidget(label, 1, 1)
         
-        monster_properties_appearance_layout.addWidget(QtWidgets.QLabel("Script ID"), 3, 1)
+        label = QtWidgets.QLabel("Scrip&t ID")
         box = QtWidgets.QLineEdit()
         box.textEdited.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setInputMask("HHHH")
         box.setText("0000")
         monster_properties_appearance_layout.addWidget(box, 4, 1)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_appearance_layout.addWidget(label, 3, 1)
         
-        monster_properties_appearance_layout.addWidget(QtWidgets.QLabel("Obj ID"), 5, 1)
+        label = QtWidgets.QLabel("&Obj ID")
         box = ObjectIDSpinBox()
         box.valueChanged.connect(self.change_monster_object)
         box.setMaximum(0x151 - 1)
         monster_properties_appearance_layout.addWidget(box, 6, 1)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_appearance_layout.addWidget(label, 5, 1)
 
         line = QtWidgets.QFrame()
         line.setFrameShape(QtWidgets.QFrame.VLine)
@@ -82,13 +90,15 @@ class EnemyDataTab(QtWidgets.QWidget):
         monster_properties_stats_layout.setContentsMargins(0, 0, 0, 0)
         monster_properties_layout.addWidget(monster_properties_stats, 0, 2)
         for i in range(5):
-            monster_properties_stats_layout.addWidget(QtWidgets.QLabel(["LV", "HP", "POW", "DEF", "SPEED"][i]), 0, i)
+            label = QtWidgets.QLabel(["&LV", "&HP", "&POW", "&DEF", "&SPEED"][i])
             box = QtWidgets.QSpinBox()
             box.valueChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
             box.setMaximum([99, 0x7FFF, 999, 999, 999][i])
             monster_properties_stats_layout.addWidget(box, 1, i)
 
             self.all_stats.append(box)
+            label.setBuddy(box)
+            monster_properties_stats_layout.addWidget(label, 0, i)
 
         # monster properties - properties
 
@@ -97,32 +107,37 @@ class EnemyDataTab(QtWidgets.QWidget):
         monster_properties_properties_layout.setContentsMargins(0, 0, 0, 0)
         monster_properties_layout.addWidget(monster_properties_properties, 2, 2)
 
-        box = QtWidgets.QCheckBox("Spiky")
+        box = QtWidgets.QCheckBox("Spi&ky")
         box.checkStateChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         monster_properties_properties_layout.addWidget(box, 0, 0, 2, 1)
         self.all_stats.append(box)
 
-        box = QtWidgets.QCheckBox("Flying")
+        box = QtWidgets.QCheckBox("&Flying")
         box.checkStateChanged.connect(self.change_monster_flying)
         monster_properties_properties_layout.addWidget(box, 0, 1, 2, 1)
         self.all_stats.append(box)
 
         for i in range(5):
+            label = QtWidgets.QLabel(["Fi&re Damage", "&Burn Chance", "Di&zzy Chance", "St&at Down Chance", "&Instant KO Chance"][i])
             x_coord, y_coord = [(2, 0), (0, 1), (1, 1), (2, 1), (2, 2)][i]
-            monster_properties_properties_layout.addWidget(QtWidgets.QLabel(["Fire Damage", "Burn Chance", "Dizzy Chance", "Stat Down Chance", "Instant KO Chance"][i]), y_coord * 2, x_coord)
             box = QtWidgets.QComboBox()
-            box.addItems(["Normal", "Double", "Half", "Immune"])
+            if i == 0:
+                box.addItems(["Normal", "Critical", "Half", "Immune"])
+            else:
+                box.addItems(["Normal", "Double", "Half", "Immune"])
             box.currentIndexChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
             monster_properties_properties_layout.addWidget(box, (y_coord * 2) + 1, x_coord)
 
             self.all_stats.append(box)
+            label.setBuddy(box)
+            monster_properties_properties_layout.addWidget(label, y_coord * 2, x_coord)
 
-        box = QtWidgets.QCheckBox("Unknown 1")
+        box = QtWidgets.QCheckBox("Unknown &1")
         box.checkStateChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         monster_properties_properties_layout.addWidget(box, 4, 0, 2, 1)
         self.all_stats.append(box)
 
-        box = QtWidgets.QCheckBox("Unknown 2")
+        box = QtWidgets.QCheckBox("Unknown &2")
         box.checkStateChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         monster_properties_properties_layout.addWidget(box, 4, 1, 2, 1)
         self.all_stats.append(box)
@@ -134,21 +149,25 @@ class EnemyDataTab(QtWidgets.QWidget):
         monster_properties_drops_layout.setContentsMargins(0, 0, 0, 0)
         monster_properties_layout.addWidget(monster_properties_drops, 4, 2)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("EXP"), 0, 0)
+        label = QtWidgets.QLabel("E&XP")
         box = QtWidgets.QSpinBox()
         box.valueChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaximum(9999)
         monster_properties_drops_layout.addWidget(box, 1, 0)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 0, 0)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("Coins"), 2, 0)
+        label = QtWidgets.QLabel("&Coins")
         box = QtWidgets.QSpinBox()
         box.valueChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaximum(9999)
         monster_properties_drops_layout.addWidget(box, 3, 0)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 2, 0)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("Normal Item"), 0, 1)
+        label = QtWidgets.QLabel("&Normal Item")
         box = QtWidgets.QLineEdit()
         box.textEdited.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaxLength(4)
@@ -156,16 +175,20 @@ class EnemyDataTab(QtWidgets.QWidget):
         box.setText("0000")
         monster_properties_drops_layout.addWidget(box, 1, 1)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 0, 1)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("Normal Drop Rate"), 0, 2, 1, 2)
+        label = QtWidgets.QLabel("&Normal Drop Rate")
         box = QtWidgets.QSpinBox()
         box.valueChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaximum(100)
         box.setSuffix("%")
         monster_properties_drops_layout.addWidget(box, 1, 2, 1, 2)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 0, 2, 1, 2)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("Rare Item"), 2, 1)
+        label = QtWidgets.QLabel("&Rare Item")
         box = QtWidgets.QLineEdit()
         box.textEdited.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaxLength(4)
@@ -173,18 +196,23 @@ class EnemyDataTab(QtWidgets.QWidget):
         box.setText("0000")
         monster_properties_drops_layout.addWidget(box, 3, 1)
         self.all_stats.append(box)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 2, 1)
         
-        monster_properties_drops_layout.addWidget(QtWidgets.QLabel("Rare Drop Rate"), 2, 2)
+        label = QtWidgets.QLabel("&Rare Drop Rate")
+        label.setStyleSheet("QLabel { text-decoration: underline; }")
         box = QtWidgets.QSpinBox()
         box.valueChanged.connect(partial(self.change_monster_stat, len(self.all_stats)))
         box.setMaximum(100)
         box.setSuffix("%")
         monster_properties_drops_layout.addWidget(box, 3, 2, 1, 2)
         self.all_stats.append(box)
-
-        rare_tooltip = QtWidgets.QLabel("<u>?</u>")
-        rare_tooltip.setToolTip("This is the percentage of the Normal Drop Rate that will result\nin you receiving the Rare Item instead of the Normal Item.")
-        monster_properties_drops_layout.addWidget(rare_tooltip, 2, 3)
+        label.setBuddy(box)
+        monster_properties_drops_layout.addWidget(label, 2, 2, 1, 2)
+        
+        tooltip_string = "This is the percentage of the Normal Drop Rate that will result\nin you receiving the Rare Item instead of the Normal Item."
+        label.setToolTip(tooltip_string)
+        box.setToolTip(tooltip_string)
 
         # ======================================================================================================================
 

@@ -63,7 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.enemy_data_tab = EnemyDataTab(self.monster_data, self.monster_names, self.overlay_BObjMon_offsets, self.overlay_BObj, self.BObjMon_file)
 
-        main.addTab(self.enemy_data_tab, "Enemy Data")
+        main.addTab(self.enemy_data_tab, "&Enemy Data")
         
         self.setCentralWidget(main)
 
